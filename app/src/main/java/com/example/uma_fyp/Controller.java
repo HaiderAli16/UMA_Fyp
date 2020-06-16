@@ -3,6 +3,8 @@ package com.example.uma_fyp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,9 +12,13 @@ import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class Controller extends AppCompatActivity {
+public class Controller extends AppCompatActivity implements ManageProfile.switchPage, Feedback.switchPage{
 
     BottomNavigationView bottomNavigationView;
+
+    public VoiceCommand objVC = new VoiceCommand();
+    public Feedback objFB = new Feedback();
+    public ManageProfile objMP = new ManageProfile();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +38,13 @@ public class Controller extends AppCompatActivity {
             switch (item.getItemId())
             {
                 case R.id.nav_home:
-                    selectedFragment = new VoiceCommand();
+                    selectedFragment = objVC;
                     break;
                 case R.id.nav_feedback:
-                    selectedFragment = new Feedback();
+                    selectedFragment = objFB;
                     break;
                 case R.id.nav_profile:
-                    selectedFragment = new ManageProfile();
+                    selectedFragment = objMP;
                 break;
                 case R.id.nav_logout:
                     Intent intent = new Intent(Controller.this, User.class);
@@ -56,5 +62,27 @@ public class Controller extends AppCompatActivity {
         super.onBackPressed();
         Intent intent = new Intent(Controller.this, User.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void pageSwitch() {
+        FragmentManager fragmentManager;
+        FragmentTransaction fragmentTransaction;
+        fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.controller, new VoiceCommand());
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    @Override
+    public void pageSwitchHome() {
+        FragmentManager fragmentManager;
+        FragmentTransaction fragmentTransaction;
+        fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.controller, new VoiceCommand());
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 }

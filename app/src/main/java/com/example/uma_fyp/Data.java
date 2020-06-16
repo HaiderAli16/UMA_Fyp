@@ -2,14 +2,14 @@ package com.example.uma_fyp;
 
 public class Data {
 
-    public String firstNname, secoundName, number, email;
+    public String firstName, secoundName, number, email;
 
     public Data(){
 
     }
 
-    public Data(String firstNname, String secoundName, String number, String email) {
-        this.firstNname = firstNname;
+    public Data(String firstName, String secoundName, String number, String email) {
+        this.firstName = firstName;
         this.secoundName = secoundName;
         this.number = number;
         this.email = email;
