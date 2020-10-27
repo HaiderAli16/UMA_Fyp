@@ -76,17 +76,30 @@
                 android:textColorHint="@color/gray"
                 android:textSize="15sp" />
 
-
+            <RelativeLayout
+                android:id="@+id/relative"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/ForgotPass"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_marginTop="3dp"
                 android:layout_marginBottom="3dp"
                 android:text="@string/forgot_password"
                 android:textColor="@color/gray" />
-
+            <CheckBox
+                android:id="@+id/Rememberme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/white"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
+                android:text="Remember Me"
+                android:textSize="10dp"
+                android:layout_alignParentRight="true"
+                android:textColor="@color/white" />
+            </RelativeLayout>
 
             <Button
             android:id="@+id/btnSignIn"
@@ -97,7 +110,6 @@
             android:text="@string/sign_inLog"
             android:layout_marginBottom="100sp"
             android:textColor="#FFFFFF" />
-
 
 
 

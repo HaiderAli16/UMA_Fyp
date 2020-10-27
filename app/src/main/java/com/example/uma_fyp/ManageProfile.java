@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -184,7 +185,7 @@ public class ManageProfile extends Fragment {
         }
         else if (firstname.length()<3 || secoundname.length()<3)
         {
-            builder.setMessage("Min Password Length is 8 . . !")
+            builder.setMessage("Enter Valid User Name . . !")
                     .setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -231,25 +232,44 @@ public class ManageProfile extends Fragment {
     private void retiveProfileInfo() {
         databaseReference = FirebaseDatabase.getInstance().getReference().child("User")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        Log.d("debugger", String.valueOf(databaseReference));
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String fname = dataSnapshot.child("firstName").getValue().toString();
-                String sname = dataSnapshot.child("secoundName").getValue().toString();
-                String phone = dataSnapshot.child("number").getValue().toString();
-                String email = dataSnapshot.child("email").getValue().toString();
 
-                Firstname.setText(fname);
-                Secoundname.setText(sname);
-                Phone.setText(phone);
-                Email.setText(email);
+                if (dataSnapshot.exists()){
+                    String fname = dataSnapshot.child("firstName").getValue().toString();
+                    String sname = dataSnapshot.child("secoundName").getValue().toString();
+                    String phone = dataSnapshot.child("number").getValue().toString();
+                    String email = dataSnapshot.child("email").getValue().toString();
 
-                progressDialog.dismiss();
+                    Firstname.setText(fname);
+                    Secoundname.setText(sname);
+                    Phone.setText(phone);
+                    Email.setText(email);
+
+                    progressDialog.dismiss();
+                }
+                else{
+                    progressDialog.dismiss();
+                    builder.setMessage("No Data Exist . . !")
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.setTitle("Error");
+                    alert.show();
+                }
+
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
     }

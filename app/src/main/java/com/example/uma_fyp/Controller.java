@@ -39,19 +39,22 @@ public class Controller extends AppCompatActivity implements ManageProfile.switc
             {
                 case R.id.nav_home:
                     selectedFragment = objVC;
+                    getSupportFragmentManager().beginTransaction().replace(R.id.controller, selectedFragment).commit();
                     break;
                 case R.id.nav_feedback:
                     selectedFragment = objFB;
+                    getSupportFragmentManager().beginTransaction().replace(R.id.controller, selectedFragment).commit();
                     break;
                 case R.id.nav_profile:
                     selectedFragment = objMP;
+                    getSupportFragmentManager().beginTransaction().replace(R.id.controller, selectedFragment).commit();
                 break;
                 case R.id.nav_logout:
+                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     Intent intent = new Intent(Controller.this, User.class);
                     startActivity(intent);
                     break;
             }
-            getSupportFragmentManager().beginTransaction().replace(R.id.controller, selectedFragment).commit();
 
             return true;
         }

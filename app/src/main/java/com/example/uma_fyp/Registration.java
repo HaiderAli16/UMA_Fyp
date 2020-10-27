@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,7 @@ public class Registration extends Fragment {
     public String email, password, confirmPassword;
 
     public AutoCompleteTextView Email, Password, ConfrimPassword;
+    public TextView switchtologin;
     public Button signIn;
 
 

@@ -2,23 +2,30 @@ package com.example.uma_fyp;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class Login extends Fragment {
+
 
     AlertDialog.Builder builder;
     ProgressDialog progressDialog;
@@ -26,12 +33,17 @@ public class Login extends Fragment {
     AutoCompleteTextView email, password;
     TextView forgetpass, register;
     Button signin;
-
+    CheckBox rememberme;
     onClickForgetPass obj;
     onClickSigninButton objSignInbtn;
     onClickRegisterButton objRegisterbtn;
 
     private String user_email, user_password;
+
+    private SharedPreferences loginPreferences;
+    private SharedPreferences.Editor loginPrefsEditor;
+    private Boolean saveLogin;
+
 
     @Nullable
     @Override
@@ -43,13 +55,25 @@ public class Login extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+
         progressDialog = new ProgressDialog(getContext());
         builder = new AlertDialog.Builder(getContext());
         email = getActivity().findViewById(R.id.EmailLog);
+        rememberme = getActivity().findViewById(R.id.Rememberme);
         password = getActivity().findViewById(R.id.PasswordLog);
         forgetpass = getActivity().findViewById(R.id.ForgotPass);
         register = getActivity().findViewById(R.id.SignIn);
         signin = getActivity().findViewById(R.id.btnSignIn);
+
+        loginPreferences = getActivity().getSharedPreferences("loginPrefs", MODE_PRIVATE);
+        loginPrefsEditor = loginPreferences.edit();
+        saveLogin = loginPreferences.getBoolean("saveLogin", false);
+        if (saveLogin == true) {
+            email.setText(loginPreferences.getString("username", ""));
+            password.setText(loginPreferences.getString("password", ""));
+            rememberme.setChecked(true);
+        }
+
         forgetpass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,6 +83,19 @@ public class Login extends Fragment {
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+
+                if (rememberme.isChecked()) {
+                    loginPrefsEditor.putBoolean("saveLogin", true);
+                    loginPrefsEditor.putString("username", email.getText().toString());
+                    loginPrefsEditor.putString("password", password.getText().toString());
+                    loginPrefsEditor.commit();
+                } else {
+                    loginPrefsEditor.clear();
+                    loginPrefsEditor.commit();
+                }
+
                 if(validate()){
                     progressDialog.setTitle("Log In");
                     progressDialog.setMessage("Logging . . .");
@@ -78,6 +115,8 @@ public class Login extends Fragment {
             }
         });
     }
+
+
 
     private boolean validate() {
         user_email = email.getText().toString().trim();

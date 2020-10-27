@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthResult;
@@ -29,9 +31,6 @@ public class User extends AppCompatActivity implements Login.onClickForgetPass, 
     FragmentTransaction fragmentTransaction;
 
     private FirebaseAuth firebaseAuth;
-
-    public String userEmail, password;
-
 
 
     @Override
@@ -121,6 +120,7 @@ public class User extends AppCompatActivity implements Login.onClickForgetPass, 
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()){
+                    //getFragmentStackClear();
                     fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.add(R.id.userLayout, new Login());
                     fragmentTransaction.addToBackStack(null);
