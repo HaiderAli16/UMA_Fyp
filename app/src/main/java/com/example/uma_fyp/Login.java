@@ -28,7 +28,7 @@ public class Login extends Fragment {
 
 
     AlertDialog.Builder builder;
-    ProgressDialog progressDialog;
+    static ProgressDialog progressDialog;
 
     AutoCompleteTextView email, password;
     TextView forgetpass, register;

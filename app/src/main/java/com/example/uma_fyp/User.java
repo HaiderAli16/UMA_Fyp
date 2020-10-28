@@ -31,7 +31,7 @@ public class User extends AppCompatActivity implements Login.onClickForgetPass, 
     FragmentTransaction fragmentTransaction;
 
     private FirebaseAuth firebaseAuth;
-
+    String useremail, password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +80,9 @@ public class User extends AppCompatActivity implements Login.onClickForgetPass, 
                             finish();
                         } 
                         else {
+                            Login.progressDialog.dismiss();
                             Toast.makeText(User.this, "Login Failed", Toast.LENGTH_SHORT).show();
+
                         }
                     }
                 });
