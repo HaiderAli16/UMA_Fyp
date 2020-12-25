@@ -141,6 +141,4 @@ public class User extends AppCompatActivity implements Login.onClickForgetPass, 
             }
         });
     }
-
-
 }

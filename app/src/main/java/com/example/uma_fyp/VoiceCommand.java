@@ -2,8 +2,11 @@ package com.example.uma_fyp;
 
 import android.Manifest;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetFileDescriptor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.view.LayoutInflater;
@@ -18,7 +21,14 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.chaquo.python.PyObject;
+import com.chaquo.python.Python;
 
+import org.tensorflow.lite.Interpreter;
+
+import java.io.FileInputStream;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
@@ -29,6 +39,11 @@ public class VoiceCommand extends Fragment {
     private static final int REQUEST_CODE = 765;
     LottieAnimationView lottieAnimationView;
 
+    Python py;
+    Interpreter tflite;
+
+    TextProcess textProcess;
+    Float PredictedResult;
     Intent vab;
 
     @Nullable
@@ -84,8 +99,90 @@ public class VoiceCommand extends Fragment {
         }
     }
 
+    private MappedByteBuffer loadModel(){
+        //InputStream tffiles=this.getAssets().open("model.tflite");
+        //BitmapFactory.decodeStream(tffiles);
+        AssetFileDescriptor fileDescriptor=null;
+        try{
+            fileDescriptor = getContext().getAssets().openFd("model.tflite");
+        }
+        catch(Exception  e)
+        {
+            e.printStackTrace();
+        }
+
+        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+        FileChannel fileChannel=inputStream.getChannel();
+        long startOffset = fileDescriptor.getStartOffset();
+        long declaredLength = fileDescriptor.getDeclaredLength();
+        MappedByteBuffer mappedByteBuffer=null;
+        try{
+            mappedByteBuffer=fileChannel.map(FileChannel.MapMode.READ_ONLY,startOffset,declaredLength);
+        }
+        catch(Exception expected)
+        {
+            expected.printStackTrace();
+        }
+
+        return mappedByteBuffer;
+    }
+
     private void showText() {
         ArrayList<String> toText = vab.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+        //textProcess = new TextProcess(this.getContext());
+        //PredictedResult =  textProcess.doInference(toText.get(0));
+        //Toast.makeText(getActivity(), ""+ PredictedResult, Toast.LENGTH_SHORT).show();
+
+        py = Python.getInstance();
+        tflite = new Interpreter(loadModel());
+
+
+        final PyObject pyobj = py.getModule("textprocess");
+
+        float inputValArr[][][]= new float[1][20][300];
+        inputValArr=pyobj.callAttr("testTxt", toText.get(0)).toJava(float[][][].class);
+        float outputValArr[][]=new float [1][1];
+        tflite.run(inputValArr,outputValArr);
+        PredictedResult = outputValArr[0][0];
+        Toast.makeText(getContext(), "" + PredictedResult.toString(), Toast.LENGTH_SHORT).show();
+
+
+
+
+
+
+        if (toText.get(0).equals("گوگل اوپن کرو") || toText.get(0).equals("گوگل اوپن کرو"))
+        {
+            Uri uri = Uri.parse("http://www.google.com");
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+        }
+
+        else if (toText.get(0).equals("واٹس اپ اوپن کر دو") || toText.get(0).equals("واٹس ایپ کھول دو"))
+        {
+            Intent i = new Intent(Intent.ACTION_MAIN);
+            PackageManager managerclock = getActivity().getPackageManager();
+            i = managerclock.getLaunchIntentForPackage("com.whatsapp");
+            i.addCategory(Intent.CATEGORY_LAUNCHER);
+            startActivity(i);
+        }
+
+        else if (toText.get(0).equals("میسیج ایپ کھول دو") || toText.get(0).equals("اوپن میسجز"))
+        {
+            String textnum = "12345";
+            Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+            smsIntent.setType("vnd.android-dir/mms-sms");
+            smsIntent.setData(Uri.parse("sms:"));
+            startActivity(smsIntent);
+        }
+
+        else if (toText.get(0).equals("کیمرہ کھولو دو") || toText.get(0).equals("اوپن کیمرہ"))
+        {
+            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+            startActivity(intent);
+        }
+
         Toast.makeText(getContext(), toText.get(0), Toast.LENGTH_SHORT).show();
     }
 
